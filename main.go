@@ -11,6 +11,11 @@ import (
 	"github.com/gorilla/mux"
 )
 
+const (
+	EnvHeartbeatAddress = "HEARTBEAT_ADDRESS"
+	EnvListeningAddress = "LISTENING_ADDRESS"
+)
+
 type M struct {
 	handler http.Handler
 }
@@ -34,13 +39,19 @@ func IndexHandler(rw http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(rw).Encode(msg)
 }
 
-func main() {
-	address := os.Getenv("LISTENING_ADDRESS")
-	hAddress := os.Getenv("HEARTBEAT_ADDRESS")
-	log.SetPrefix("[service] ")
-	go heartbeat.RunHeartbeatService(hAddress)
+func createBaseHandler() http.Handler {
 	r := mux.NewRouter()
 	r.HandleFunc("/", IndexHandler)
+	return NewM(r)
+}
+
+func main() {
+	log.SetPrefix("[service] ")
+
+	hAddress := os.Getenv(EnvHeartbeatAddress)
+	go heartbeat.RunHeartbeatService(hAddress)
+
+	address := os.Getenv(EnvListeningAddress)
 	log.Println("Service request at: " + address)
-	log.Println(http.ListenAndServe(address, NewM(r)))
+	log.Println(http.ListenAndServe(address, createBaseHandler()))
 }
