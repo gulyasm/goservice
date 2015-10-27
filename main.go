@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"log"
+	"net"
 	"net/http"
 	"os"
 	"time"
@@ -30,18 +31,28 @@ func NewM(h http.Handler) http.Handler {
 	return M{h}
 }
 
-func IndexHandler(rw http.ResponseWriter, r *http.Request) {
-	msg := struct {
-		Message string `json:"message"`
-	}{
-		"Hello world!",
+type IPMessage struct {
+	IPs []net.IP
+}
+
+func getIPs(domain string) []net.IP {
+	ips, err := net.LookupIP(domain)
+	if err != nil {
+		log.Println("Failed to resolve: " + err.Error())
+	}
+	return ips
+}
+
+func IPHandler(rw http.ResponseWriter, r *http.Request) {
+	msg := IPMessage{
+		getIPs("cnn.com"),
 	}
 	json.NewEncoder(rw).Encode(msg)
 }
 
 func createBaseHandler() http.Handler {
 	r := mux.NewRouter()
-	r.HandleFunc("/", IndexHandler)
+	r.HandleFunc("/service/ip", IPHandler)
 	return NewM(r)
 }
 

@@ -22,7 +22,7 @@ func TestMain(t *testing.T) {
 	defer s.Close()
 	resp, err := http.Get(s.URL)
 	if err != nil {
-		t.Fatalf("Failed to query index \n", err)
+		t.Fataln("Failed to query index", err)
 	}
 	if resp.StatusCode != 200 {
 		t.Fatalf("StatusCode is not 200")
