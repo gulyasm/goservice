@@ -6,11 +6,14 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"text/template"
 	"time"
 
 	"github.com/enbritely/heartbeat-golang"
 	"github.com/gorilla/mux"
 )
+
+var queries = []Query{}
 
 const (
 	EnvHeartbeatAddress = "HEARTBEAT_ADDRESS"
@@ -35,24 +38,58 @@ type IPMessage struct {
 	IPs []net.IP
 }
 
-func getIPs(domain string) []net.IP {
-	ips, err := net.LookupIP(domain)
-	if err != nil {
-		log.Println("Failed to resolve: " + err.Error())
-	}
-	return ips
+type ErrorMessage struct {
+	Error string
 }
 
 func IPHandler(rw http.ResponseWriter, r *http.Request) {
+	domain := r.URL.Query().Get("domain")
+	if domain == "" {
+		msg := ErrorMessage{"Empty domain parameter"}
+		json.NewEncoder(rw).Encode(msg)
+		return
+	}
+	ips, err := net.LookupIP(domain)
+	if err != nil {
+		msg := ErrorMessage{"Invalid domain address."}
+		json.NewEncoder(rw).Encode(msg)
+		return
+	}
 	msg := IPMessage{
-		getIPs("cnn.com"),
+		ips,
 	}
 	json.NewEncoder(rw).Encode(msg)
+	queries = append(queries, Query{domain, ips})
 }
 
+type Query struct {
+	Domain string
+	IPs    []net.IP
+}
+
+type PageData struct {
+	Build   string
+	Queries []Query
+}
+
+func uiHandler(rw http.ResponseWriter, r *http.Request) {
+	tmpl, err := template.ParseFiles("templates/index.html")
+	if err != nil {
+		log.Panic("Error occured parsing the template", err)
+	}
+	page := PageData{
+		Build:   heartbeat.CommitHash,
+		Queries: queries,
+	}
+	if err = tmpl.Execute(rw, page); err != nil {
+		log.Panic("Failed to write template", err)
+	}
+
+}
 func createBaseHandler() http.Handler {
 	r := mux.NewRouter()
 	r.HandleFunc("/service/ip", IPHandler)
+	r.HandleFunc("/", uiHandler)
 	return NewM(r)
 }
 

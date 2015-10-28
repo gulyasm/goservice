@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="http://d2fq26gzgmfal8.cloudfront.net/bootstrap.min.css" media="screen">
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <h1>Domain checker</h1>
+        </div>
+        <div class="row">
+            <table class="table table-bordered">
+                <tr>
+                    <th>Domain</th>
+                    <th>IPs</th>
+                </tr>
+                {{ range .Queries }}
+                <tr>
+                    <td><a href="http://index.hu">{{ .Domain }} </a> </td>
+                    <td>{{ .IPs }} </td>
+                </tr>
+                {{ end }}
+            </table>
+        </div>
+        <div class="row">
+            <table class="table">
+                <tr>
+                    <td><a href="https://github.com/gulyasm/goservice/tree/{{ .Build }}"> {{ .Build }} </a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <script src="http://d2fq26gzgmfal8.cloudfront.net/bootstrap.min.js"></script>
+    <script src="http://d2fq26gzgmfal8.cloudfront.net/jquery-1.10.2.min.js"></script>
+</body>
+
+</html>
