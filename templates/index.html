@@ -20,7 +20,7 @@
                 </tr>
                 {{ range .Queries }}
                 <tr>
-                    <td><a href="http://index.hu">{{ .Domain }} </a> </td>
+                    <td><a href="http://{{ .Domain }}">{{ .Domain }} </a> </td>
                     <td>{{ .IPs }} </td>
                 </tr>
                 {{ end }}

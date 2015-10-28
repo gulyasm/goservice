@@ -42,7 +42,7 @@ type ErrorMessage struct {
 	Error string
 }
 
-func IPHandler(rw http.ResponseWriter, r *http.Request) {
+func ipHandler(rw http.ResponseWriter, r *http.Request) {
 	domain := r.URL.Query().Get("domain")
 	if domain == "" {
 		msg := ErrorMessage{"Empty domain parameter"}
@@ -88,7 +88,7 @@ func uiHandler(rw http.ResponseWriter, r *http.Request) {
 }
 func createBaseHandler() http.Handler {
 	r := mux.NewRouter()
-	r.HandleFunc("/service/ip", IPHandler)
+	r.HandleFunc("/service/ip", ipHandler)
 	r.HandleFunc("/", uiHandler)
 	return NewM(r)
 }

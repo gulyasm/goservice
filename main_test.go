@@ -13,7 +13,7 @@ func TestInvalidDomain(t *testing.T) {
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
-	IPHandler(w, r)
+	ipHandler(w, r)
 	s := `{"Error":"Invalid domain address."}`
 	msg := strings.TrimSpace(w.Body.String())
 	if msg != s {
@@ -27,7 +27,7 @@ func TestEmptyDomain(t *testing.T) {
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
-	IPHandler(w, r)
+	ipHandler(w, r)
 	s := `{"Error":"Empty domain parameter"}`
 	msg := strings.TrimSpace(w.Body.String())
 	if msg != s {
@@ -40,7 +40,7 @@ func TestNodomain(t *testing.T) {
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
-	IPHandler(w, r)
+	ipHandler(w, r)
 	s := `{"Error":"Empty domain parameter"}`
 	msg := strings.TrimSpace(w.Body.String())
 	if msg != s {
@@ -54,7 +54,7 @@ func TestIndex(t *testing.T) {
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
-	IPHandler(w, r)
+	ipHandler(w, r)
 	s := `{"IPs":["127.0.0.1"]}`
 	msg := strings.TrimSpace(w.Body.String())
 	if msg != s {
