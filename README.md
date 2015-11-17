@@ -32,4 +32,7 @@ To test the heartbeat service:
 curl localhost:12501/heartbeat
 ```
 
+## UI
+The UI is available at [http://localhost:12500](http://localhost:12500)
+
 
